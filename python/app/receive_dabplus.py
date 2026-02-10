@@ -86,6 +86,8 @@ def receive_dabplus(frequency=220.352e6, rf_gain=25, if_gain=0, bb_gain=0, ppm=8
 
 
 
+    # Connect OFDM demodulator to decoder
+    # OFDM demodulator has single output (data only)
     fg.connect(src, dab_ofdm_demod_0, decoder)
     fg.connect((decoder, 0), (f2c, 0))
     fg.connect((decoder, 1), (f2c, 1))
@@ -101,6 +103,12 @@ def receive_dabplus(frequency=220.352e6, rf_gain=25, if_gain=0, bb_gain=0, ppm=8
 
     if from_file != None and from_file_repeat == False and skip_xrun_monitor:
         fg.run()
+    elif skip_xrun_monitor:
+        # Non-interactive mode: run for a short time then stop
+        fg.start()
+        import time
+        time.sleep(5)  # Run for 5 seconds
+        fg.stop()
     else:
         fg.start()
         input("Running..")

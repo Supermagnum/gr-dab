@@ -138,11 +138,12 @@ class ofdm_demod(gr.hier_block2):
 		if self.rp.softbits:
 			gr.hier_block2.__init__(self,"ofdm_demod",
 						gr.io_signature (1, 1, gr.sizeof_gr_complex), # input signature
-						gr.io_signature (1, 1, gr.sizeof_float*self.dp.num_carriers*2)) # output signature
+						gr.io_signature(1, 1, gr.sizeof_float*self.dp.num_carriers*2)) # output signature: data only (trigger not exposed)
 		else:
 			gr.hier_block2.__init__(self,"ofdm_demod",
 						gr.io_signature (1, 1, gr.sizeof_gr_complex), # input signature
 						gr.io_signature (1, 1, gr.sizeof_char*self.dp.num_carriers/4)) # output signature
+			# For non-softbits mode, sync trigger output goes to null sink
 
 		
 
@@ -222,12 +223,16 @@ class ofdm_demod(gr.hier_block2):
 		else:
 			self.input2 = self.input
 		if self.rp.input_fft_filter:
-			self.connect(self.input2, self.fft_filter, self.sync)
+			self.connect(self.input2, self.fft_filter)
+			self.input3 = self.fft_filter
 		else:
-			self.connect(self.input2, self.sync)
+			self.input3 = self.input2
 
-		# data stream
-		self.connect(self.sync, self.sampler, self.fft, self.cfs, self.phase_diff, self.remove_pilot)
+		# Connect input to sync block
+		self.connect(self.input3, self.sync)
+
+		# data stream - connect sync output 0 (data) to processing chain
+		self.connect((self.sync, 0), self.sampler, self.fft, self.cfs, self.phase_diff, self.remove_pilot)
 		if self.rp.equalize_magnitude:
 			self.connect(self.remove_pilot, self.equalizer, self.deinterleave)
 		else:

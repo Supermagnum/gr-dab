@@ -78,7 +78,8 @@ def get_channels(frequency=220.352e6, rf_gain=25, if_gain=0, bb_gain=0, ppm=0, u
             )
     #dab_fic_decode_0.set_print_channel_info(True)
 
-
+    # Connect OFDM demodulator to FIC decoder
+    # Both have single input/output for data (trigger not needed)
     fg.connect(src, dab_ofdm_demod_0)
     fg.connect(dab_ofdm_demod_0, dab_fic_decode_0)
 

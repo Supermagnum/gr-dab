@@ -34,11 +34,11 @@ set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "")
 # Make sure our local CMake Modules path comes first
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 # Find gnuradio to get access to the cmake modules
-find_package(Gnuradio "3.10" REQUIRED COMPONENTS blocks filter fft)
+find_package(Gnuradio "3.11" REQUIRED COMPONENTS blocks filter fft)
 
 # Set the version information here
 set(VERSION_MAJOR 3)
-set(VERSION_API    10)
+set(VERSION_API    11)
 set(VERSION_ABI 0)
 #set(VERSION_PATCH git)
 

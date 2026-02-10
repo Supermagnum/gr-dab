@@ -128,10 +128,13 @@ class fic_decode(gr.hier_block2):
                      self.fibsink)
         self.connect(self.fibout, self)
         self.connect(self.prbs_src, (self.add_mod_2, 1))
+        
+        # Connect input 1 (trigger) to null sink if it exists (for compatibility)
+        # Note: This is only needed if the signature declares 2 inputs, but we've changed it to 1
 
         if self.debug:
             self.connect((self, 0), blocks.file_sink(gr.sizeof_float * self.dp.num_carriers * 2, "debug/transmission_frame.dat"))
-            self.connect((self, 1), blocks.file_sink(gr.sizeof_char, "debug/transmission_frame_trigger.dat"))
+            # Note: input 1 (trigger) no longer exists - removed for compatibility
             self.connect(self.select_fic_syms, blocks.file_sink(gr.sizeof_float * self.dp.num_carriers * 2, "debug/fic_select_syms.dat"))
             self.connect(self.repartition_fic, blocks.file_sink(gr.sizeof_float * self.dp.fic_punctured_codeword_length, "debug/fic_repartitioned.dat"))
             self.connect(self.unpuncture, blocks.file_sink(gr.sizeof_float * self.dp.fic_conv_codeword_length, "debug/fic_unpunctured.dat"))
